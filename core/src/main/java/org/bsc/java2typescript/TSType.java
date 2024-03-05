@@ -1,5 +1,8 @@
 package org.bsc.java2typescript;
 
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,7 +31,6 @@ public class TSType extends HashMap<String, Object> {
     protected TSType() {
         super(3);
     }
-
 
     public static TSType of() {
         return new TSType() {
@@ -213,21 +215,32 @@ public class TSType extends HashMap<String, Object> {
      * @return
      */
     private Class<?> getClassFrom(Object dt) {
-        if (dt instanceof Class)
+        if (dt instanceof Class) {
             return (Class<?>) dt;
+        }
 
-        final String fqn = dt.toString();
+        final String fqn;
+        if (dt instanceof DeclaredType) {
+            fqn = getClassName((TypeElement)((DeclaredType) dt).asElement());
+        } else {
+            fqn = dt.toString();
+        }
         try {
             return Class.forName(fqn);
-
         } catch (ClassNotFoundException e1) {
-
             try {
                 return getMemberClassForName(fqn);
-    
             } catch (ClassNotFoundException e2) {
                 throw new RuntimeException(String.format("class not found [%s]", dt), e1);
             }
+        }
+    }
+
+    private static String getClassName(TypeElement elt) {
+        if (elt.getEnclosingElement().getKind().equals(ElementKind.CLASS)) {
+            return getClassName((TypeElement) elt.getEnclosingElement()) + "$" + elt.getSimpleName().toString();
+        } else {
+            return elt.getQualifiedName().toString();
         }
     }
 
