@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Workaround for https://github.com/actions/checkout/issues/290, https://github.com/actions/checkout/issues/882
+      - name: Fetch annotated tags
+        run: git fetch --tags --force
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_PROD_JAVA2TS }}
+          aws-region: us-east-1
+
+      - name: Milestone or Release?
+        id: repository
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          token=$(aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_OWNER }} --query authorizationToken --output text)
+          echo "::add-mask::$token"
+          echo "token=$token" >> $GITHUB_OUTPUT
+          echo "GITHUB_REF=$GITHUB_REF"
+          if [[ "$GITHUB_REF" =~ .*-M[0-9]+ ]]; then
+            echo "Milestone version detected"
+            echo "repositoryId=codeartifact-milestones" >> $GITHUB_OUTPUT
+            echo "repositoryUrl=https://${{ secrets.AWS_CODEARTIFACT_DOMAIN }}-${{ secrets.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/milestones" >> $GITHUB_OUTPUT
+          else
+            echo "Release version detected"
+            echo "repositoryId=codeartifact-releases" >> $GITHUB_OUTPUT
+            echo "repositoryUrl=https://${{ secrets.AWS_CODEARTIFACT_DOMAIN }}-${{ secrets.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/releases" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+          server-id: ${{ steps.repository.outputs.repositoryId }}
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - name: Deploy
+        env:
+          MAVEN_USERNAME: aws
+          MAVEN_PASSWORD: ${{ steps.repository.outputs.token }}
+        run: |
+          mvn --batch-mode \
+            deploy \
+            -Prelease \
+            -DrepositoryId=${{ steps.repository.outputs.repositoryId}} \
+            -DrepositoryUrl=${{ steps.repository.outputs.repositoryUrl}}

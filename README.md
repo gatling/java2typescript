@@ -1,9 +1,4 @@
-<a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22java2ts-processor%22"><img src="https://img.shields.io/maven-central/v/org.bsc.processor/java2ts-processor.svg">
-
-
 # java2typescript
-
-[![Join the chat at https://gitter.im/bsorrentino/java2typescript](https://badges.gitter.im/bsorrentino/java2typescript.svg)](https://gitter.im/bsorrentino/java2typescript?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Java Processor to **generate [Typescript](https://www.typescriptlang.org/)  Definition file (.d.ts)** from whatever Java classes.
 
@@ -110,7 +105,7 @@ package org.mypackage;
 
 ```xml
 <dependency>
-  <groupId>org.bsc.processor</groupId>
+  <groupId>io.gatling</groupId>
   <artifactId>java2ts-processor</artifactId>
   <version>version</version>
 </dependency>
@@ -143,44 +138,3 @@ package org.mypackage;
 </plugin>
 
 ```
-
-**Enforce [Rhino](https://github.com/mozilla/rhino) compatibility [see samples](./samples.rhino)**
-
-```xml
-<plugin>
-  <groupId>org.bsc.maven</groupId>
-  <artifactId>maven-processor-plugin</artifactId>
-  <version>3.3.3</version>
-  <executions>
-    <execution>
-      <id>process</id>
-      <goals>
-        <goal>process</goal>
-      </goals>
-      <phase>generate-sources</phase>
-      <configuration>
-          <outputDirectory>${project.build.directory}</outputDirectory>
-       <options>
-            <ts.outfile>name</ts.outfile><!-- name of generated file -->
-            <compatibility>rhino</compatibility>
-       </options>
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
-```
-
-
-### Use Maven Archetype
-
-The easier way to start your **Typescript on JVM** project is using the provided maven archetype
-
-**Interactive Mode**
-
->```
->mvn archetype:generate \
->-DarchetypeGroupId=org.bsc.processor \
->-DarchetypeArtifactId=java2ts-processor-archetype \
->-DarchetypeVersion=1.1.0
->```
-

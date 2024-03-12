@@ -9,7 +9,6 @@
 		@Type(java.lang.System.class),
 
 		@Type(value=java.util.Collection.class),
-		@Type(value=java.util.List.class),
 		@Type(value=java.util.Arrays.class, export=true),
 
 		@Type(java.nio.file.Files.class),

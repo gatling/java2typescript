@@ -2,41 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.bsc.processor</groupId>
+    <groupId>io.gatling</groupId>
     <artifactId>java2ts-processor-parent</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>0.0.0</version>
     <packaging>pom</packaging>
 
     <name>java2ts-processor::parent</name>
     <description>
-        Java Processor to generate Typescript Definition from Java classes - This is to help developing on JVM
-        javascript engine (ie Nashorn/Rhino) using Typescript
+        Java Processor to generate Typescript Definition from Java classes - This is to help developing on GraalJS using Typescript
     </description>
-    <url>https://github.com/bsorrentino/java2typescript</url>
+    <url>https://github.com/gatling/java2typescript</url>
+    <scm>
+        <connection>scm:git:git:@github.com:gatling/java2typescript.git</connection>
+        <developerConnection>scm:git:git:@github.com:gatling/java2typescript.git</developerConnection>
+        <url>https://github.com/gatling/java2typescript</url>
+    </scm>
+
     <distributionManagement>
         <repository>
-            <name>central</name>
-            <id>${release.repo.id}</id>
-            <url>${release.repo.url}</url>
+            <id>${repositoryId}</id>
+            <url>${repositoryUrl}</url>
         </repository>
-        <snapshotRepository>
-            <name>snapshot</name>
-            <id>${snapshot.repo.id}</id>
-            <url>${snapshot.repo.url}</url>
-            <!--uniqueVersion>false</uniqueVersion-->
-        </snapshotRepository>
-        <!--
-        <site>
-            <id>${release.site.id}</id>
-            <url>${release.site.url}</url>
-        </site>
-        -->
     </distributionManagement>
-    <scm>
-        <connection>scm:git:https://github.com/bsorrentino/java2typescript.git</connection>
-        <developerConnection>scm:git:https://github.com/bsorrentino/java2typescript.git</developerConnection>
-        <url>https://github.com/bsorrentino/java2typescript.git</url>
-    </scm>
 
     <inceptionYear>2017</inceptionYear>
 
@@ -49,12 +36,12 @@
 
     <developers>
         <developer>
-            <email>bartolomeo.sorrentino@gmail.com</email>
-            <name>Bartolomeo Sorrentino</name>
-            <timezone>GMT+1</timezone>
-            <roles>
-                <role>Owner</role>
-            </roles>
+            <email>ggaly@gatling.io</email>
+            <name>Guillaume Galy</name>
+        </developer>
+        <developer>
+            <email>gcorre@gatling.io</email>
+            <name>Guillaume Corré</name>
         </developer>
     </developers>
 
@@ -78,17 +65,12 @@
             <dependency>
                 <groupId>org.kohsuke.metainf-services</groupId>
                 <artifactId>metainf-services</artifactId>
-                <version>1.7</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.spullara.mustache.java</groupId>
-                <artifactId>compiler</artifactId>
-                <version>0.9.4</version>
+                <version>1.11</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.json</artifactId>
-                <version>1.1.2</version>
+                <version>1.1.4</version>
             </dependency>
             <dependency>
                 <groupId>org.bsc</groupId>
@@ -98,7 +80,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -111,25 +93,19 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.2.5</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.3.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.12.1</version>
                     <configuration>
                         <parameters>true</parameters>
                     </configuration>
@@ -138,7 +114,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
+                    <version>3.6.3</version>
                     <configuration>
                         <additionalparam>-Xdoclint:none</additionalparam>
                         <outputDirectory>${project.build.directory}/apidocs</outputDirectory>
@@ -148,47 +124,30 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.1.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.3.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.bsc.maven</groupId>
                     <artifactId>maven-processor-plugin</artifactId>
-                    <version>5.0-jdk8-rc3</version>
+                    <version>5.0-jdk8</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.6.0</version>
+                    <version>3.2.0</version>
                 </plugin>
 
             </plugins>
         </pluginManagement>
 
-        <plugins>
-            <!--
-            mvn git-changelog-maven-plugin:git-changelog -N -DtoRef=refs/heads/release/...
-            -->
-            <plugin>
-                <groupId>se.bjurr.gitchangelog</groupId>
-                <artifactId>git-changelog-maven-plugin</artifactId>
-                <inherited>false</inherited>
-                <version>1.78</version>
-                <!-- Minimal config // -->
-                <configuration>
-                    <settingsFile>changelog.json</settingsFile>
-                    <file>CHANGELOG.md</file>
-                </configuration>
-            </plugin>
-
-        </plugins>
     </build>
     <profiles>
         <profile>
@@ -215,43 +174,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <!--
-                    ====================================================================================
-                    # https://github.com/keybase/keybase-issues/issues/2798
-                    export GPG_TTY=$(tty)
-                    mvn -Prelease source:jar javadoc:jar deploy -Dgpg.passphrase=thephrase
-                    ====================================================================================
-                    -->
-                    <plugin>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.5.1</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>sonatype-server</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <stagingProfileId/>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
