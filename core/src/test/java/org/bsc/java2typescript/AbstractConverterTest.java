@@ -7,8 +7,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bsc.java2typescript.TypescriptConverter.Compatibility;
-
 /**
  * 
  * @author bsorrentino
@@ -16,7 +14,7 @@ import org.bsc.java2typescript.TypescriptConverter.Compatibility;
  */
 public abstract class AbstractConverterTest {
     
-    final TypescriptConverter converter = new TypescriptConverter(Compatibility.NASHORN);
+    final TypescriptConverter converter = new TypescriptConverter();
     
     protected java.util.Map<String,TSType> declaredClassMap( Class<?> ... classes) {
         return Stream.of( classes )

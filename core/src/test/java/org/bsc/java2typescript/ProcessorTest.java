@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.bsc.java2typescript.TypescriptConverter.Compatibility;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
@@ -104,7 +103,7 @@ public class ProcessorTest extends AbstractConverterTest {
 	@Test
 	public void testClassDecl() throws Exception {
 		
-        TypescriptConverter.Context ctx = converter.contextOf(TSType.of(ArrayList.class), Collections.emptyMap(), Compatibility.NASHORN);
+        TypescriptConverter.Context ctx = converter.contextOf(TSType.of(ArrayList.class), Collections.emptyMap());
 		{
 			final String result  = ctx.getClassDecl().toString();
 		

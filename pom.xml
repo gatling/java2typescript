@@ -67,7 +67,6 @@
         <module>processor</module>
         <module>archetype</module>
         <module>samples</module>
-        <module>samples.rhino</module>
         <module>core</module>
     </modules>
     <dependencyManagement>

@@ -22,17 +22,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.Optional.*;
 import static org.bsc.java2typescript.TypescriptConverter.PREDEFINED_TYPES;
-
-;
 
 /**
  * @author bsoorentino
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("org.bsc.processor.annotation.*")
-@SupportedOptions({"ts.outfile", "compatibility"})
+@SupportedOptions({"ts.outfile"})
 @org.kohsuke.MetaInfServices(javax.annotation.processing.Processor.class)
 public class TypescriptProcessor extends AbstractProcessorEx {
 
@@ -98,22 +95,14 @@ public class TypescriptProcessor extends AbstractProcessorEx {
   public boolean process(Context processingContext) throws Exception {
 
     final String targetDefinitionFile = processingContext.getOptionMap().getOrDefault("ts.outfile", "out");
-    //final String compatibility 		= processingContext.getOptionMap().getOrDefault("compatibility", "nashorn");
 
     final String definitionsFile = targetDefinitionFile.concat(".d.ts");
     final String typesFile = targetDefinitionFile.concat("-types.ts");
 
-    final String compatibilityOption =
-        processingContext.getOptionMap()
-            .getOrDefault("compatibility", "NASHORN")
-            .toUpperCase();
-    info("COMPATIBILITY WITH [%s]", compatibilityOption);
-
-    final TypescriptConverter converter =
-        new TypescriptConverter(TypescriptConverter.Compatibility.valueOf(compatibilityOption));
+    final TypescriptConverter converter = new TypescriptConverter();
 
     try (
-        final java.io.Writer wD = openFile(Paths.get(definitionsFile), converter.isRhino() ? "headerD-rhino.ts" : "headerD.ts");
+        final java.io.Writer wD = openFile(Paths.get(definitionsFile), "headerD.ts");
         final java.io.Writer wT = openFile(Paths.get(typesFile), "headerT.ts");
     ) {
 

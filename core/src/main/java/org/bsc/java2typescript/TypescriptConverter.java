@@ -11,7 +11,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,36 +20,8 @@ import java.util.stream.Stream;
  *
  */
 public class TypescriptConverter extends TypescriptConverterStatic {
-    public enum Compatibility {
-        NASHORN, RHINO, GRAALJS;
-
-        public String javaType(String fqn) {
-            switch (this.ordinal()) {
-            case 1:
-                return format("Packages.%s", fqn );
-            default:
-                return format("Java.type(\"%s\")", fqn );
-            }
-        }
-    }
-
-    final Compatibility compatibility;
-
-    public TypescriptConverter(Compatibility compatibility) {
-        super();
-        this.compatibility = compatibility;
-    }
 
     /**
-     * 
-     * @return
-     */
-    public final boolean isRhino() {
-        return compatibility == Compatibility.RHINO;
-    }
-
-    /**
-     *
      * @param type
      * @param declaredTypeMap
      * @return
@@ -105,7 +76,7 @@ public class TypescriptConverter extends TypescriptConverterStatic {
                 .append(": ")
                 .append(ctx.type.getSimpleTypeName())
                 .append("Static = ")
-                .append(compatibility.javaType(ctx.type.getValue().getName()))
+                .append(format("Java.type(\"%s\")", ctx.type.getValue().getName()))
                 .append(ENDL)
                 .append("\n\n");
 
@@ -391,8 +362,7 @@ public class TypescriptConverter extends TypescriptConverterStatic {
      * @param declaredTypeMap
      * @return
      */
-    public Context contextOf(TSType tstype, java.util.Map<String, TSType> declaredTypeMap,
-            Compatibility compatibility) {
+    public Context contextOf(TSType tstype, java.util.Map<String, TSType> declaredTypeMap) {
         return new Context(tstype, declaredTypeMap);
     }
 
@@ -405,7 +375,7 @@ public class TypescriptConverter extends TypescriptConverterStatic {
      */
     public String processClass(int level, TSType tstype, java.util.Map<String, TSType> declaredTypeMap) {
 
-        final Context ctx = contextOf(tstype, declaredTypeMap, compatibility);
+        final Context ctx = contextOf(tstype, declaredTypeMap);
 
         final java.util.Set<Method> methods = tstype.getMethods();
         
@@ -422,9 +392,6 @@ public class TypescriptConverter extends TypescriptConverterStatic {
                 .ifPresent(
                     m -> ctx.append('\t')
                             .append(getMethodParametersAndReturnDecl(ctx, m, false))
-                            // Rhino compatibility ???
-                            //.append("\n\t")
-                            //.append(getMethodDecl(ctx, m, false /* non optional */))
                             .append(ENDL));
 
             methods.stream()
