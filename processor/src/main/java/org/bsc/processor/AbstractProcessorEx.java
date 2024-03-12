@@ -129,7 +129,7 @@ public abstract class AbstractProcessorEx extends AbstractProcessor {
             Path filePath) throws IOException {
         final Filer filer = processingEnv.getFiler();
 
-        Element e = null;
+        Element[] e = null;
         final FileObject res
                 = filer.createResource(
                         StandardLocation.SOURCE_OUTPUT,
