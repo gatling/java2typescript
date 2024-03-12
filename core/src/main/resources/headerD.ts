@@ -14,8 +14,8 @@ type double = number;
 type byte   = number;
 type char   = string;
 
-type chararray = [byte];
-type bytearray = [char];
+type chararray = [char];
+type bytearray = [byte];
 
 declare namespace java.lang {
 
@@ -29,6 +29,8 @@ declare namespace java.lang {
 declare namespace java.util {
 
 	interface RandomAccess {}
+
+	type List<E> = E[];
 }
 
 declare namespace java.io {
