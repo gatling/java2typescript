@@ -44,7 +44,8 @@ public abstract class TypescriptConverterStatic {
             TSType.of(Closeable.class),
             TSType.of(AutoCloseable.class),
             TSType.of(Cloneable.class),
-            TSType.of(RandomAccess.class)
+            TSType.of(RandomAccess.class),
+            TSType.of(List.class)
          );
 
 
