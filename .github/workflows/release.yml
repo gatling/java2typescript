@@ -64,7 +64,7 @@ jobs:
           MAVEN_USERNAME: aws
           MAVEN_PASSWORD: ${{ steps.repository.outputs.token }}
         run: |
-          mvn --batch-mode \
+          mvn --batch-mode -Dstyle.color=always --no-transfer-progress \
             deploy \
             -Prelease \
             -DrepositoryId=${{ steps.repository.outputs.repositoryId}} \
