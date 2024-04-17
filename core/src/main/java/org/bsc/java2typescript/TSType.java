@@ -189,6 +189,8 @@ public class TSType extends HashMap<String, Object> {
     public Set<Method> getMethods() {
         final Predicate<Method> include = m -> !m.isBridge() && !m.isSynthetic() && Modifier.isPublic(m.getModifiers())
                 && Character.isJavaIdentifierStart(m.getName().charAt(0))
+                // HACK ggaly don't expose 'make' methods in Gatling Java DSL
+                && !"make".equals(m.getName())
                 && m.getName().chars().skip(1).allMatch(Character::isJavaIdentifierPart);
 
         return Stream.concat(Stream.of(getValue().getMethods()), Stream.of(getValue().getDeclaredMethods()))
