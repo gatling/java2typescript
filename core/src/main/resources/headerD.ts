@@ -14,8 +14,8 @@ type double = number;
 type byte   = number;
 type char   = string;
 
-type chararray = [char];
-type bytearray = [byte];
+type chararray = char[];
+type bytearray = byte[];
 
 declare namespace java.lang {
 
