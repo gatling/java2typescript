@@ -476,7 +476,7 @@ public abstract class TypescriptConverterStatic {
                                               declaredTypeMap,
                                               packageResolution,
                                               onTypeMismatch);
-          return format("[%s]", tt);
+          return format("%s[]", tt);
           
           
           //return ( typeParameterMatch.apply(declaringType.getValue(), componentType ))  ?
