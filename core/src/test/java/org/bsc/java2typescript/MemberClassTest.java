@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author bsorrentino
  *
  */
-public class MemeberClassTest extends AbstractConverterTest {
+public class MemberClassTest extends AbstractConverterTest {
 
     
     @Test

@@ -46,7 +46,7 @@ public class TypescriptProcessor extends AbstractProcessorEx {
 
       // Utility class(s)
       TSType.of(java.util.stream.Collectors.class).setExport(true),
-      TSType.of(java.util.Collections.class).setExport(true),
+      // TSType.of(java.util.Collections.class).setExport(true), // Requires smarter typing of java.util.Map (only treat it as a record if the type of the key is compatible)
 
       // Native functional interface(s)
       TSType.of(java.util.function.Function.class).setAlias("Func"),
