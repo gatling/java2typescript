@@ -41,7 +41,6 @@ public class TypescriptProcessor extends AbstractProcessorEx {
       TSType.of(java.util.Iterator.class),
       TSType.of(java.util.Collection.class),
       TSType.of(java.util.Set.class),
-      TSType.of(java.util.Map.class),
       TSType.of(java.util.Optional.class).setExport(true),
       TSType.of(java.util.stream.Stream.class).setExport(true),
 

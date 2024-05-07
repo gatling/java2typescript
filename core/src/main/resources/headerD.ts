@@ -31,6 +31,8 @@ declare namespace java.util {
 	interface RandomAccess {}
 
 	type List<E> = E[];
+
+	type Map<K extends keyof any, V> = Record<K, V>;
 }
 
 declare namespace java.io {
