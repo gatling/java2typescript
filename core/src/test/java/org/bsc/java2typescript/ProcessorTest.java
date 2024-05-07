@@ -343,7 +343,7 @@ public class ProcessorTest extends AbstractConverterTest {
 								true) ;
 		
 		Assert.assertThat( result, IsNull.notNullValue());		
-		Assert.assertThat( result, IsEqual.equalTo("( c:[E] ):java.util.List<T[]>"));
+		Assert.assertThat( result, IsEqual.equalTo("( c:E[] ):java.util.List<T[]>"));
 
 	
 	}
