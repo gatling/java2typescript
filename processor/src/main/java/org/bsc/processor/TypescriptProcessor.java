@@ -141,7 +141,7 @@ public class TypescriptProcessor extends AbstractProcessorEx {
           .sorted()
           .forEach(wD_append);
 
-      wT_append.accept(String.format("/// <reference path=\"%s\"/>\n\n", definitionsFile));
+      wT_append.accept(String.format("import \"%s\"\n\n", definitionsFile));
 
       types.stream()
           .filter(t -> t.isExport())
