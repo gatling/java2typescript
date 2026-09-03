@@ -28,7 +28,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_PROD_JAVA2TS }}
+          role-to-assume: ${{ vars.AWS_ROLE_PROD_JAVA2TS }}
           aws-region: us-east-1
 
       - name: Milestone or Release?
@@ -36,18 +36,18 @@ jobs:
         env:
           GITHUB_REF: ${{ github.ref }}
         run: |
-          token=$(aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_OWNER }} --query authorizationToken --output text)
+          token=$(aws codeartifact get-authorization-token --domain ${{ vars.AWS_CODEARTIFACT_DOMAIN }} --domain-owner ${{ vars.AWS_CODEARTIFACT_OWNER }} --query authorizationToken --output text)
           echo "::add-mask::$token"
           echo "token=$token" >> $GITHUB_OUTPUT
           echo "GITHUB_REF=$GITHUB_REF"
           if [[ "$GITHUB_REF" =~ .*-M[0-9]+ ]]; then
             echo "Milestone version detected"
             echo "repositoryId=codeartifact-milestones" >> $GITHUB_OUTPUT
-            echo "repositoryUrl=https://${{ secrets.AWS_CODEARTIFACT_DOMAIN }}-${{ secrets.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/milestones" >> $GITHUB_OUTPUT
+            echo "repositoryUrl=https://${{ vars.AWS_CODEARTIFACT_DOMAIN }}-${{ vars.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/milestones" >> $GITHUB_OUTPUT
           else
             echo "Release version detected"
             echo "repositoryId=codeartifact-releases" >> $GITHUB_OUTPUT
-            echo "repositoryUrl=https://${{ secrets.AWS_CODEARTIFACT_DOMAIN }}-${{ secrets.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/releases" >> $GITHUB_OUTPUT
+            echo "repositoryUrl=https://${{ vars.AWS_CODEARTIFACT_DOMAIN }}-${{ vars.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/releases" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up JDK 21
