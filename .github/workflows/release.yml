@@ -34,20 +34,22 @@ jobs:
       - name: Milestone or Release?
         id: repository
         env:
+          AWS_CODEARTIFACT_DOMAIN: ${{ vars.AWS_CODEARTIFACT_DOMAIN }}
+          AWS_CODEARTIFACT_OWNER: ${{ vars.AWS_CODEARTIFACT_OWNER }}
           GITHUB_REF: ${{ github.ref }}
         run: |
-          token=$(aws codeartifact get-authorization-token --domain ${{ vars.AWS_CODEARTIFACT_DOMAIN }} --domain-owner ${{ vars.AWS_CODEARTIFACT_OWNER }} --query authorizationToken --output text)
+          token=$(aws codeartifact get-authorization-token --domain "${AWS_CODEARTIFACT_DOMAIN}" --domain-owner "${AWS_CODEARTIFACT_OWNER}" --query authorizationToken --output text)
           echo "::add-mask::$token"
           echo "token=$token" >> $GITHUB_OUTPUT
           echo "GITHUB_REF=$GITHUB_REF"
           if [[ "$GITHUB_REF" =~ .*-M[0-9]+ ]]; then
             echo "Milestone version detected"
             echo "repositoryId=codeartifact-milestones" >> $GITHUB_OUTPUT
-            echo "repositoryUrl=https://${{ vars.AWS_CODEARTIFACT_DOMAIN }}-${{ vars.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/milestones" >> $GITHUB_OUTPUT
+            echo "repositoryUrl=https://${AWS_CODEARTIFACT_DOMAIN}-${AWS_CODEARTIFACT_OWNER}.d.codeartifact.us-east-1.amazonaws.com/maven/milestones" >> $GITHUB_OUTPUT
           else
             echo "Release version detected"
             echo "repositoryId=codeartifact-releases" >> $GITHUB_OUTPUT
-            echo "repositoryUrl=https://${{ vars.AWS_CODEARTIFACT_DOMAIN }}-${{ vars.AWS_CODEARTIFACT_OWNER }}.d.codeartifact.us-east-1.amazonaws.com/maven/releases" >> $GITHUB_OUTPUT
+            echo "repositoryUrl=https://${AWS_CODEARTIFACT_DOMAIN}-${AWS_CODEARTIFACT_OWNER}.d.codeartifact.us-east-1.amazonaws.com/maven/releases" >> $GITHUB_OUTPUT
           fi
 
       - name: Set up JDK 21
@@ -63,9 +65,11 @@ jobs:
         env:
           MAVEN_USERNAME: aws
           MAVEN_PASSWORD: ${{ steps.repository.outputs.token }}
+          REPOSITORY_ID: ${{ steps.repository.outputs.repositoryId}}
+          REPOSITORY_URL: ${{ steps.repository.outputs.repositoryUrl}}
         run: |
           mvn --batch-mode -Dstyle.color=always --no-transfer-progress \
             deploy \
             -Prelease \
-            -DrepositoryId=${{ steps.repository.outputs.repositoryId}} \
-            -DrepositoryUrl=${{ steps.repository.outputs.repositoryUrl}}
+            -DrepositoryId="${REPOSITORY_ID}" \
+            -DrepositoryUrl="${REPOSITORY_URL}"
