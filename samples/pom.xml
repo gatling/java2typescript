@@ -1,121 +1,121 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>io.gatling</groupId>
-        <artifactId>java2ts-processor-parent</artifactId>
-        <version>0.0.0</version>
-    </parent>
+  <parent>
+    <groupId>io.gatling</groupId>
+    <artifactId>java2ts-processor-parent</artifactId>
+    <version>0.0.0</version>
+  </parent>
 
-    <artifactId>graaljs-sample</artifactId>
-    <name>java2ts-processor::graaljs::sample</name>
-    <description>graaljs sample</description>
+  <artifactId>graaljs-sample</artifactId>
+  <name>java2ts-processor::graaljs::sample</name>
+  <description>graaljs sample</description>
 
-    <properties>
-        <graalvm.version>25.5.5.0.3</graalvm.version>
-        <main.app>app.js</main.app>
-    </properties>
+  <properties>
+    <graalvm.version>25.5.5.0.3</graalvm.version>
+    <main.app>app.js</main.app>
+  </properties>
 
-    <build>
-      <finalName>sample</finalName>
-        <plugins>
+  <build>
+    <finalName>sample</finalName>
+    <plugins>
 
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                  <proc>none</proc>
-              </configuration>
-            </plugin>
-      		<plugin>
-      		   <groupId>org.apache.maven.plugins</groupId>
-      		   <artifactId>maven-deploy-plugin</artifactId>
-      			<configuration>
-      				<skip>true</skip>
-      			</configuration>
-      		 </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <proc>none</proc>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.11.0</version>
-                <executions>
-                    <execution>
-                        <id>unpack</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.bsc</groupId>
-                                    <artifactId>jvm-npm-core</artifactId>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/js</outputDirectory>
-                                    <includes>**/*.js</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-cli</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>
-                                <argument>--module-path</argument>
-                                <!-- automatically creates the modulepath using all project dependencies, also adding the project build directory -->
-                                <modulepath/>
-                                <argument>--add-modules=org.graalvm.polyglot</argument>
-                                <argument>--enable-native-access=org.graalvm.truffle</argument>
-                                <argument>--sun-misc-unsafe-memory-access=allow</argument>
-                                <argument>-classpath</argument>
-                                <!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
-                                <classpath/>
-                                <argument>org.bsc.java2ts.JSRun$Graaljs</argument>
-                                <argument>${main.app}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>${JAVA_HOME}/bin/java</executable>
-                </configuration>
-            </plugin>
-          <plugin>
-			<groupId>org.bsc.maven</groupId>
-			<artifactId>maven-processor-plugin</artifactId>
-			<executions>
-				<execution>
-					<id>process</id>
-					<goals>
-						<goal>process-test</goal>
-					</goals>
-					<phase>package</phase>
-					<configuration>
-						<outputDirectory>ts</outputDirectory>
-						<skipSourcesUnchanged>false</skipSourcesUnchanged>
-						<options>
-							<ts.outfile>jdk</ts.outfile>
-						</options>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.11.0</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.bsc</groupId>
+                  <artifactId>jvm-npm-core</artifactId>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/js</outputDirectory>
+                  <includes>**/*.js</includes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-cli</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <arguments>
+                <argument>--module-path</argument>
+                <!-- automatically creates the modulepath using all project dependencies, also adding the project build directory -->
+                <modulepath/>
+                <argument>--add-modules=org.graalvm.polyglot</argument>
+                <argument>--enable-native-access=org.graalvm.truffle</argument>
+                <argument>--sun-misc-unsafe-memory-access=allow</argument>
+                <argument>-classpath</argument>
+                <!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
+                <classpath/>
+                <argument>org.bsc.java2ts.JSRun$Graaljs</argument>
+                <argument>${main.app}</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>${JAVA_HOME}/bin/java</executable>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process</id>
+            <goals>
+              <goal>process-test</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <outputDirectory>ts</outputDirectory>
+              <skipSourcesUnchanged>false</skipSourcesUnchanged>
+              <options>
+                <ts.outfile>jdk</ts.outfile>
+              </options>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-        </plugins>
-    </build>
-    <dependencies>
+    </plugins>
+  </build>
+  <dependencies>
 
     <dependency>
       <groupId>io.gatling</groupId>
@@ -123,31 +123,31 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-        <groupId>org.graalvm.polyglot</groupId>
-        <artifactId>polyglot</artifactId>
-        <version>${graalvm.version}</version>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>polyglot</artifactId>
+      <version>${graalvm.version}</version>
     </dependency>
     <dependency>
-        <groupId>org.graalvm.polyglot</groupId>
-        <artifactId>js</artifactId>
-        <version>${graalvm.version}</version>
-        <type>pom</type>
-        <scope>runtime</scope>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>js</artifactId>
+      <version>${graalvm.version}</version>
+      <type>pom</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
-        <groupId>org.graalvm.polyglot</groupId>
-        <artifactId>profiler</artifactId>
-        <version>${graalvm.version}</version>
-        <type>pom</type>
-        <scope>runtime</scope>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>profiler</artifactId>
+      <version>${graalvm.version}</version>
+      <type>pom</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
-        <groupId>org.graalvm.polyglot</groupId>
-        <artifactId>inspect</artifactId>
-        <version>${graalvm.version}</version>
-        <type>pom</type>
-        <scope>runtime</scope>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>inspect</artifactId>
+      <version>${graalvm.version}</version>
+      <type>pom</type>
+      <scope>runtime</scope>
     </dependency>
 
-    </dependencies>
+  </dependencies>
 </project>

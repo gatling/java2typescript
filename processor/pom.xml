@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>java2ts-processor</artifactId>
-    <name>java2ts-processor::processor</name>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>java2ts-processor</artifactId>
+  <name>java2ts-processor::processor</name>
 
-    <parent>
-	    <groupId>io.gatling</groupId>
-	    <artifactId>java2ts-processor-parent</artifactId>
-        <version>0.0.0</version>
-    </parent>
+  <parent>
+    <groupId>io.gatling</groupId>
+    <artifactId>java2ts-processor-parent</artifactId>
+    <version>0.0.0</version>
+  </parent>
 
-    <build>
-        <finalName>java2ts-processor</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <proc>full</proc>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <finalName>java2ts-processor</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <proc>full</proc>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
-            <optional>true</optional>
-        </dependency>
-		<dependency>
-		    <groupId>org.glassfish</groupId>
-		    <artifactId>javax.json</artifactId>
-            <optional>true</optional>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kohsuke.metainf-services</groupId>
+      <artifactId>metainf-services</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <optional>true</optional>
+    </dependency>
 
-		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>java2ts-processor-core</artifactId>
-            <version>${project.version}</version>
-		</dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>java2ts-processor-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-    </dependencies>
+  </dependencies>
 
 </project>
