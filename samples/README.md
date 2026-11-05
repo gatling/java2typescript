@@ -2,6 +2,8 @@
 
 This examples use "[GraalJs](https://github.com/graalvm/graaljs)"
 
+> Run it on a GraalVM 25 JDK to benefit from runtime compilation. On other JDKs, GraalJS runs in interpreter-only mode (see [Runtime Optimization Support](https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support)).
+
 ### install javascript packages
 
 > npm install
@@ -10,7 +12,7 @@ This examples use "[GraalJs](https://github.com/graalvm/graaljs)"
 
 > mvn clean package
 
-This task will generate `jdk8.d.ts` and `jdk8-types.ts` into folder `ts/j2ts`
+This task will generate `jdk.d.ts` and `jdk-types.ts` into folder `ts/j2ts`
 
 ### Compile typescript
 

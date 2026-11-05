@@ -37,7 +37,7 @@
 		@Type( value=org.bsc.java2ts.JSExecutor.class, export=true)
 
 })
-package org.bsc.java2ts.jdk8;
+package org.bsc.java2ts.jdk;
 
 
 import org.bsc.processor.annotation.Java2TS;

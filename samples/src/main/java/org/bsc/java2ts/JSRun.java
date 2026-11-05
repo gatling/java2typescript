@@ -3,6 +3,7 @@ package org.bsc.java2ts;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.io.IOAccess;
 
 public class JSRun {
 
@@ -14,7 +15,7 @@ public class JSRun {
                                         .allowHostAccess(HostAccess.ALL)
                                         //.allowCreateThread(true)
                                         .allowHostClassLookup( s -> true )
-                                        .allowIO(true)
+                                        .allowIO(IOAccess.ALL)
                                         //.allowExperimentalOptions(true)
                                         //.option("js.experimental-foreign-object-prototype", "true")
                                         .build();

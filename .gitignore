@@ -7,6 +7,7 @@
 # maven
 target/
 bin/
+.maven-processor-source-files.txt
 
 # eclipse
 .classpath
