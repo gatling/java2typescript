@@ -7,7 +7,6 @@ import org.bsc.processor.annotation.Java2TS;
 
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -27,7 +26,6 @@ import static org.bsc.java2typescript.TypescriptConverter.PREDEFINED_TYPES;
 /**
  * @author bsoorentino
  */
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("org.bsc.processor.annotation.*")
 @SupportedOptions({"ts.outfile"})
 @org.kohsuke.MetaInfServices(javax.annotation.processing.Processor.class)
@@ -84,6 +82,11 @@ public class TypescriptProcessor extends AbstractProcessorEx {
     }
 
     return w;
+  }
+
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
+    return SourceVersion.latestSupported();
   }
 
   /**

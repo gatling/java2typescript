@@ -4,7 +4,7 @@ import {
     Stream,
     Collectors
 
-} from "./j2ts/jdk8-types";
+} from "./j2ts/jdk-types";
 
 
 export function test() {
