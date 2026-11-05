@@ -103,6 +103,13 @@ class NestedMixed {
 /** generic owner with nested generic types */
 class NestedGeneric<T> {
 
+    /** referenced from the owner itself: NestedGeneric&lt;T&gt;.Inner&lt;String&gt; */
+    public Inner<String> newInner() { return null; }
+
+    /** level 1 non-static non-generic inner class: NestedGeneric&lt;T&gt;.Plain */
+    public class Plain {
+    }
+
     /** level 1 non-static generic inner class: NestedGeneric&lt;T&gt;.Inner&lt;U&gt; */
     public class Inner<U> {
 
@@ -160,4 +167,6 @@ class NestedUser {
 
     public NestedGeneric<String>.Inner<Integer> genericInner() { return null; }
     public NestedGeneric<String>.Inner<Integer>.Deep<Long> genericDeep() { return null; }
+    public NestedGeneric<String>.Plain genericPlain() { return null; }
+    public List<NestedGeneric<String>.Inner<Integer>> listOfGenericInner() { return null; }
 }

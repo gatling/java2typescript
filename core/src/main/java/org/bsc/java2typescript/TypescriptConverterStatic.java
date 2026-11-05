@@ -317,12 +317,15 @@ public abstract class TypescriptConverterStatic {
           rawType.getName(),
           tstype.getTypeName() );
 
-          String result = pType.getTypeName();
-          if( rawType.isMemberClass() ) {
-              result = result 
-              .replace( rawType.getDeclaringClass().getName().concat("."), "" ) // use Alias
-              ;                    
-          }
+          final Type[] typeArgs = pType.getActualTypeArguments();
+
+          // Not pType.getTypeName(): for a member class of a parameterized type, it also holds the type arguments
+          // of the owner (e.g. "pkg.Outer<T>$Inner<U>"), which have no TypeScript equivalent
+          String result = ( typeArgs.length == 0 ) ?
+                  rawType.getName() :
+                  Stream.of(typeArgs)
+                      .map(Type::getTypeName)
+                      .collect(Collectors.joining(", ", rawType.getName() + "<", ">"));
 
           result = result.replace( rawType.getName(), tstype.getTypeName()) // use Alias
           ;
@@ -330,8 +333,6 @@ public abstract class TypescriptConverterStatic {
           if( packageResolution && isNamespaceMatch.test(tstype, declaringType) ) {
               result = result.replace( tstype.getTypeName(), tstype.getSimpleTypeName());
           }
-
-          final Type[] typeArgs = pType.getActualTypeArguments();
 
           for( Type t : typeArgs ) {
               log( "TypeArgs [%s]", t.getTypeName());

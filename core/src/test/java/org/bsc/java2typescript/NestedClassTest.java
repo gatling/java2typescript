@@ -38,7 +38,7 @@ public class NestedClassTest extends AbstractConverterTest {
             NestedMixed.class, NestedMixed.Ifc.class, NestedMixed.Ifc.Leaf.class,
             NestedMixed.Mode.class, NestedMixed.Mode.Leaf.class,
             NestedMixed.Holder.class, NestedMixed.Holder.Kind.class, NestedMixed.Holder.Inner.class,
-            NestedGeneric.class, NestedGeneric.Inner.class, NestedGeneric.Inner.Deep.class,
+            NestedGeneric.class, NestedGeneric.Plain.class, NestedGeneric.Inner.class, NestedGeneric.Inner.Deep.class,
             NestedGeneric.Mid.class, NestedGeneric.Mid.Leaf.class,
             NestedGenericOther.class, NestedGenericOther.Mid.class, NestedGenericOther.Mid.Leaf.class,
             Mid.class, Mid.Leaf.class,
@@ -234,6 +234,39 @@ public class NestedClassTest extends AbstractConverterTest {
     @Test
     public void testUsage_level2_parameterizedInterfaceInterfaceClass() throws Exception {
         Assert.assertThat(usage("ifcFindDefault"), equalTo("NestedIfc$Find$Default<string>"));
+    }
+
+    /**
+     * NestedGeneric&lt;String&gt;.Inner&lt;Integer&gt;: not specific to the nesting depth, it already fails at
+     * level 1 (the owner type arguments leak into the name).
+     */
+    @Test
+    public void testUsage_level1_innerClassOfGenericOwner() throws Exception {
+        Assert.assertThat(usage("genericInner"), equalTo("NestedGeneric$Inner<int|null>"));
+    }
+
+    /** NestedGeneric&lt;String&gt;.Inner&lt;Integer&gt;.Deep&lt;Long&gt; */
+    @Test
+    public void testUsage_level2_innerClassOfGenericOwner() throws Exception {
+        Assert.assertThat(usage("genericDeep"), equalTo("NestedGeneric$Inner$Deep<long|null>"));
+    }
+
+    /** NestedGeneric&lt;String&gt;.Plain: no type arguments of its own */
+    @Test
+    public void testUsage_level1_nonGenericInnerClassOfGenericOwner() throws Exception {
+        Assert.assertThat(usage("genericPlain"), equalTo("NestedGeneric$Plain"));
+    }
+
+    @Test
+    public void testUsage_level1_listOfInnerClassOfGenericOwner() throws Exception {
+        Assert.assertThat(usage("listOfGenericInner"), equalTo("java.util.List<NestedGeneric$Inner<int|null>>"));
+    }
+
+    /** NestedGeneric&lt;T&gt;.Inner&lt;String&gt;, referenced from the owner */
+    @Test
+    public void testUsage_level1_innerClassFromItsGenericOwner() throws Exception {
+        Assert.assertThat(getReturnType(fixtureTypeMap(), NestedGeneric.class, "newInner"),
+                equalTo("NestedGeneric$Inner<string>"));
     }
 
     // ------------------------------------------------------------------------------------------------------
