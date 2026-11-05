@@ -127,8 +127,18 @@ public class TSType extends HashMap<String, Object> {
 
     
     private String getMemberSimpleTypeName() {
+        return getMemberSimpleTypeName(getValue());
+    }
 
-        return format( "%s$%s", getValue().getDeclaringClass().getSimpleName(), getValue().getSimpleName());
+    /**
+     * Joins the simple names of all the enclosing classes, e.g. {@code A.B.C} -> {@code A$B$C}
+     */
+    private static String getMemberSimpleTypeName(Class<?> type) {
+        final Class<?> declaringClass = type.getDeclaringClass();
+        final String declaringName = declaringClass.isMemberClass() ?
+                getMemberSimpleTypeName(declaringClass) : declaringClass.getSimpleName();
+
+        return format( "%s$%s", declaringName, type.getSimpleName());
     }
 
     /**
