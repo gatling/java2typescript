@@ -1,16 +1,16 @@
 
-import markdown = require("marked");
+import { marked, Renderer, type Tokens } from "marked";
 
-class WikiRenderer implements markdown.Renderer {
+class WikiRenderer extends Renderer {
 
     langs = {
         'actionscript3' :true,
         'bash'          :true,
         'csharp'        :true,
-        'coldfusion'    :true, 
-        'cpp'           :true, 
-        'css'           :true, 
-        'delphi'        :true, 
+        'coldfusion'    :true,
+        'cpp'           :true,
+        'css'           :true,
+        'delphi'        :true,
         'diff'          :true,
         'erlang'        :true,
         'groovy'        :true,
@@ -30,34 +30,35 @@ class WikiRenderer implements markdown.Renderer {
         'xml'           :true
     };
 
-	paragraph(text:string) { return text + '\n\n'; }
-	
-    html(html:string) { return html; }
+	paragraph({ tokens }:Tokens.Paragraph) { return this.parser.parseInline(tokens) + '\n\n'; }
 
-	heading(text:string, level:number, raw:string) { return 'h' + level + '. ' + text + '\n\n' }
+    html({ text }:Tokens.HTML|Tokens.Tag) { return text; }
 
-	strong(text:string) { return '*' + text + '*' }
+	heading({ tokens, depth }:Tokens.Heading) { return 'h' + depth + '. ' + this.parser.parseInline(tokens) + '\n\n' }
 
-	em(text:string) { return '_' + text + '_' }
+	strong({ tokens }:Tokens.Strong) { return '*' + this.parser.parseInline(tokens) + '*' }
 
-	del(text:string) { return '-' + text + '-' }
+	em({ tokens }:Tokens.Em) { return '_' + this.parser.parseInline(tokens) + '_' }
 
-	codespan(text:string) { return '{{' + text + '}}' }
+	del({ tokens }:Tokens.Del) { return '-' + this.parser.parseInline(tokens) + '-' }
 
-	blockquote(quote:string) { return '{quote}' + quote + '{quote}' }
+	codespan({ text }:Tokens.Codespan) { return '{{' + text + '}}' }
+
+	blockquote({ tokens }:Tokens.Blockquote) { return '{quote}' + this.parser.parse(tokens) + '{quote}' }
 
 	br() { return '\n' }
 
 	hr() { return '----' }
 
-	link(href:string, title:string, text:string) {
-		let arr = [text,href];
+	link({ href, title, tokens }:Tokens.Link) {
+		let arr = [this.parser.parseInline(tokens),href];
 		if (title) arr.push(title);
-		
+
 		return '[' + arr.join('|') + ']'
 	}
 
-	list(body:string, ordered:boolean) {
+	list({ items, ordered }:Tokens.List) {
+        let body = items.map( (item) => this.listitem(item) ).join('');
         let arr = body.trim().split('\n').filter( (line) => line );
 
 		var type = ordered ? '#' : '*'
@@ -65,34 +66,41 @@ class WikiRenderer implements markdown.Renderer {
 
 	}
 
-	listitem(body:string /*, ordered*/) { return body + '\n' }
+	listitem({ tokens }:Tokens.ListItem) { return this.parser.parse(tokens) + '\n' }
 
-	image(href:string, title:string, text:string) { return '!' + href + '!'}
+	image({ href }:Tokens.Image) { return '!' + href + '!'}
 
-	table(header:string, body:string) { return header + body + '\n' }
+	table({ header, rows }:Tokens.Table) {
+		let head = this.tablerow({ text: header.map( (cell) => this.tablecell(cell) ).join('') });
+		let body = rows.map( (row) => this.tablerow({ text: row.map( (cell) => this.tablecell(cell) ).join('') }) ).join('');
 
-	tablerow(content:string /*, flags*/) { return content + '\n' }
-
-	tablecell(content:string, flags:any) {
-		var type = flags.header ? '||' : '|'
-		return type + content;
+		return head + body + '\n'
 	}
 
-	code(code:string, lang:string) {
+	tablerow({ text }:Tokens.TableRow) { return text + '\n' }
+
+	tablecell(cell:Tokens.TableCell) {
+		var type = cell.header ? '||' : '|'
+		return type + this.parser.parseInline(cell.tokens);
+	}
+
+	code({ text, lang }:Tokens.Code) {
 		lang = (<any>this.langs)[lang] ? lang :  "";
 
-		return '{code:' + lang + '}\n' + code + '\n{code}\n\n';
+		return '{code:' + lang + '}\n' + text + '\n{code}\n\n';
 	}
 
-    text(text: string): string { return text; }
+    text(token:Tokens.Text|Tokens.Escape): string {
+        return ('tokens' in token && token.tokens) ? this.parser.parseInline(token.tokens) : token.text;
+    }
 }
 
 const  renderer = new WikiRenderer()
 
 export function markdown2wiki(md:string) {
-	return markdown(md.toString(), {
+	return marked(md.toString(), {
         renderer: renderer,
-        sanitize:true // Sanitize the output. Ignore any HTML that has been input.
+        async: false
     });
 }
 
@@ -100,6 +108,6 @@ export function markdown2wiki(md:string) {
 export function test() {
     let res = markdown2wiki( '# TEST' );
 
-    print( res );    
+    print( res );
 }
 

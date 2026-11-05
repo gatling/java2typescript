@@ -9,7 +9,8 @@ import {
 
 export function test() {
 
-    let list = Arrays.asList( "A", "B", "C" );
+    // java.util.List and java.util.Map are typed as JS array/record by java2ts: cast to reach the Java methods
+    let list = <any>Arrays.asList( "A", "B", "C" );
 
     Stream.of( 4, 10, 9, 7, 34, 100 )
         .filter( n => n%2==0 )
@@ -20,7 +21,7 @@ export function test() {
     type element = [ number, string];
 
     let r = Stream.of<element>( [4, "Pari"], [10, "Pari"], [9, "Dispari"], [7,"Dispari"], [34, "Pari"], [100,"Pari"], [34, "Pari"] )
-        .collect( Collectors.groupingBy( ( [v,k] ) => v ) )
+        .collect<any,any>( Collectors.groupingBy( ( [v,k] ) => v ) )
         .values()
         .stream()
         .flatMap( list => list.stream().map( ([v,k]) => v ).distinct() )
