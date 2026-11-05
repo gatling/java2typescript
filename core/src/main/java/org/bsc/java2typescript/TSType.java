@@ -1,6 +1,5 @@
 package org.bsc.java2typescript;
 
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import java.lang.reflect.Field;
@@ -249,7 +248,8 @@ public class TSType extends HashMap<String, Object> {
     }
 
     private static String getClassName(TypeElement elt) {
-        if (elt.getEnclosingElement().getKind().equals(ElementKind.CLASS)) {
+        // a member type can be enclosed by any kind of type (class, interface, enum, record...)
+        if (elt.getEnclosingElement() instanceof TypeElement) {
             return getClassName((TypeElement) elt.getEnclosingElement()) + "$" + elt.getSimpleName().toString();
         } else {
             return elt.getQualifiedName().toString();

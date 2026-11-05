@@ -77,6 +77,14 @@ class NestedMixed {
         }
     }
 
+    /** level 1 record */
+    public record Rec() {
+
+        /** level 2: class > record > class */
+        public static class Leaf {
+        }
+    }
+
     /** level 1 class */
     public static class Holder {
 
