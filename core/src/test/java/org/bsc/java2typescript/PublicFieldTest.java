@@ -352,8 +352,6 @@ public class PublicFieldTest extends AbstractConverterTest {
         Assert.assertThat(fieldType(PfTypes.class, "BOX_OF_BOX", false), equalTo(PKG + "PfBox<" + PKG + "PfBox<string>>"));
     }
 
-    /** headerD.ts declares "char" and "byte", but they're mapped to any */
-    @Ignore("type mapping bug, not specific to fields")
     @Test
     public void testType_charAndByte() throws Exception {
         Assert.assertThat(fieldType(PfTypes.class, "C", false), equalTo("char"));

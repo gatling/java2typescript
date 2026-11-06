@@ -12,6 +12,7 @@ type long   = number;
 type float	= number;
 type double = number;
 type byte   = number;
+type short  = number;
 type char   = string;
 
 type chararray = char[];

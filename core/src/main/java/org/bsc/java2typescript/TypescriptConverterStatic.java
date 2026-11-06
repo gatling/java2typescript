@@ -254,6 +254,9 @@ public abstract class TypescriptConverterStatic {
       if( Long.class.isAssignableFrom(type) || type.equals(Long.TYPE)) return type.isPrimitive() ? "long"  : "long|null" ;
       if( Float.class.isAssignableFrom(type) || type.equals(Float.TYPE)) return type.isPrimitive() ? "float"  : "float|null" ;
       if( Double.class.isAssignableFrom(type) || type.equals(Double.TYPE)) return type.isPrimitive() ? "double"  : "double|null" ;
+      if( Byte.class.isAssignableFrom(type) || type.equals(Byte.TYPE)) return type.isPrimitive() ? "byte"  : "byte|null" ;
+      if( Short.class.isAssignableFrom(type) || type.equals(Short.TYPE)) return type.isPrimitive() ? "short"  : "short|null" ;
+      if( Character.class.isAssignableFrom(type) || type.equals(Character.TYPE)) return type.isPrimitive() ? "char"  : "char|null" ;
       if( Integer.class.isAssignableFrom(type) || type.equals(Integer.TYPE)) return type.isPrimitive() ? "int"  : "int|null" ;
       if( String.class.isAssignableFrom(type) ) return "string";
 
