@@ -5,8 +5,11 @@ import javax.lang.model.type.DeclaredType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -181,13 +184,51 @@ public class TSType extends HashMap<String, Object> {
      */
     public Set<Field> getFields() {
 
-        final Predicate<Field> std = f -> !f.isSynthetic() && Modifier.isPublic(f.getModifiers())
-                && Character.isJavaIdentifierStart(f.getName().charAt(0))
-                && f.getName().chars().skip(1).allMatch(Character::isJavaIdentifierPart);
-
-        return Stream.concat(Stream.of(getValue().getFields()), Stream.of(getValue().getDeclaredFields())).filter(std)
+        return Stream.concat(Stream.of(getValue().getFields()), Stream.of(getValue().getDeclaredFields())).filter(isPublicField)
                 .collect(Collectors.toSet());
 
+    }
+
+    private static final Predicate<Field> isPublicField = f -> !f.isSynthetic() && Modifier.isPublic(f.getModifiers())
+            && Character.isJavaIdentifierStart(f.getName().charAt(0))
+            && f.getName().chars().skip(1).allMatch(Character::isJavaIdentifierPart);
+
+    /**
+     * Public static fields declared by the type, sorted by name. Enum constants are excluded.
+     * <p>
+     * Inherited static fields aren't included: unlike inherited static methods, GraalJS doesn't expose them on
+     * the subtype.
+     *
+     * @return
+     */
+    public List<Field> getStaticFields() {
+        return Stream.of(getValue().getDeclaredFields())
+                .filter(isPublicField)
+                .filter(f -> Modifier.isStatic(f.getModifiers()) && !f.isEnumConstant())
+                .sorted(Comparator.comparing(Field::getName))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Public instance fields, inherited ones included, sorted by name. A hidden field is replaced by the field
+     * hiding it.
+     * <p>
+     * Fields declared by a non-public class aren't included: GraalJS doesn't expose them, even on a public subclass
+     * (unlike methods, which get public bridge methods in the subclass), and a name hidden by such a field isn't
+     * readable at all.
+     *
+     * @return
+     */
+    public List<Field> getInstanceFields() {
+        return Stream.of(getValue().getFields())
+                .filter(isPublicField)
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                .collect(Collectors.toMap(Field::getName, f -> f,
+                        (a, b) -> a.getDeclaringClass().isAssignableFrom(b.getDeclaringClass()) ? b : a,
+                        TreeMap::new))
+                .values().stream()
+                .filter(f -> Modifier.isPublic(f.getDeclaringClass().getModifiers()))
+                .collect(Collectors.toList());
     }
 
     /**

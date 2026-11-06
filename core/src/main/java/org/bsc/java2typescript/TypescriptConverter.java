@@ -3,6 +3,7 @@ package org.bsc.java2typescript;
 import static java.lang.String.format;
 
 import java.lang.reflect.Executable;
+import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -32,12 +33,23 @@ public class TypescriptConverter extends TypescriptConverterStatic {
 
         ctx.append("interface ").append(ctx.type.getSimpleTypeName()).append("Static {\n\n");
 
+        // the static methods declared below
+        final java.util.Set<Method> methodSet = (type.isFunctional()) ?
+                Collections.emptySet() :
+                ctx.type.getMethods().stream().filter(TypescriptConverter::isStatic)
+                    .collect(Collectors.toCollection(() -> new java.util.LinkedHashSet<>()));
+
+        final java.util.Set<String> methodNames = methodSet.stream().map(Method::getName).collect(Collectors.toSet());
+
         if (ctx.type.getValue().isEnum()) {
-            ctx.processEnumType();
+            ctx.processEnumType(methodNames);
         }
 
         // Append class property
         ctx.append("\treadonly class:any;\n");
+
+        // an interface can't have a property and a method with the same name, the method is kept
+        ctx.type.getStaticFields().forEach(f -> ctx.appendField(f, "", false, methodNames.contains(f.getName())));
 
         if (type.isFunctional()) {
 
@@ -59,9 +71,6 @@ public class TypescriptConverter extends TypescriptConverterStatic {
                     .forEach(c -> {
                         ctx.append("\tnew").append(getMethodParametersAndReturnDecl(ctx, c, false)).append(ENDL);
                     });
-
-            final java.util.Set<Method> methodSet = ctx.type.getMethods().stream().filter(TypescriptConverter::isStatic)
-                    .collect(Collectors.toCollection(() -> new java.util.LinkedHashSet<>()));
 
             if (!methodSet.isEmpty()) {
 
@@ -324,13 +333,20 @@ public class TypescriptConverter extends TypescriptConverterStatic {
             return this;
         }
 
-        private Context processEnumType() {
+        /**
+         *
+         * @param methodNames the names of the static methods, which hide the constants of the same name
+         * @return
+         */
+        private Context processEnumType(java.util.Set<String> methodNames) {
 
             // fix #4
             // Arrays.stream(type.getValue().getEnumConstants())
             Arrays.stream(type.getValue().getFields())
                     .filter(f -> f.isEnumConstant())
                     .forEach((c) -> sb.append('\t')
+                                        .append(methodNames.contains(c.getName()) ? "// " : "")
+                                        .append("readonly ")
                                         .append(c.getName())
                                         .append(':')
                                         .append(type.getTypeName())
@@ -340,6 +356,65 @@ public class TypescriptConverter extends TypescriptConverterStatic {
 
             return this;
 
+        }
+
+        /**
+         * Static fields (if the type isn't exported, otherwise they are in the "XStatic" interface) and instance
+         * fields, which can't have the same name as a method in TypeScript: the method is kept.
+         *
+         * @param methods the methods declared in the class
+         * @return
+         */
+        Context processFields(java.util.Set<Method> methods) {
+
+            final java.util.Set<String> staticMethodNames = methods.stream().filter(TypescriptConverter::isStatic)
+                    .map(Method::getName).collect(Collectors.toSet());
+            final java.util.Set<String> instanceMethodNames = methods.stream().filter(m -> !isStatic(m))
+                    .map(Method::getName).collect(Collectors.toSet());
+
+            if (!type.isExport()) {
+                // an interface can't have static members, like the static methods
+                type.getStaticFields().forEach(f -> appendField(f, "static ", true,
+                        type.getValue().isInterface() || isConstructor(f) || staticMethodNames.contains(f.getName())));
+            }
+
+            type.getInstanceFields().forEach(f -> appendField(f, "", true,
+                    isConstructor(f) || instanceMethodNames.contains(f.getName())));
+
+            return this;
+        }
+
+        /**
+         * a class can't have a property named "constructor"
+         */
+        private boolean isConstructor(Field f) {
+            return f.getName().equals("constructor");
+        }
+
+        /**
+         *
+         * @param f
+         * @param modifier e.g. "static "
+         * @param packageResolution
+         * @param commented when the field can't be declared in TypeScript
+         * @return
+         */
+        Context appendField(Field f, String modifier, boolean packageResolution, boolean commented) {
+
+            sb.append('\t');
+            if (commented) {
+                sb.append("// ");
+            }
+            sb.append(modifier);
+            if (Modifier.isFinal(f.getModifiers())) {
+                sb.append("readonly ");
+            }
+            sb.append(f.getName())
+                .append(':')
+                .append(convertJavaToTS(f.getGenericType(), f, type, declaredTypeMap, packageResolution, Optional.empty()))
+                .append(ENDL);
+
+            return this;
         }
 
         public Context clone() {
@@ -386,6 +461,10 @@ public class TypescriptConverter extends TypescriptConverterStatic {
 
         if (tstype.isFunctional()) {
 
+            ctx.processFields(methods.stream()
+                .filter(m -> !Modifier.isAbstract(m.getModifiers()))
+                .collect(Collectors.toSet()));
+
             methods.stream()
                 .filter(m -> Modifier.isAbstract(m.getModifiers()))
                 .findFirst()
@@ -413,6 +492,9 @@ public class TypescriptConverter extends TypescriptConverterStatic {
                         name.equals("getClass") || name.equals("hashCode") || name.equals("wait")
                                 || name.equals("notify") || name.equals("notifyAll"));
                     }).collect(Collectors.toCollection(() -> new java.util.LinkedHashSet<Method>()));
+
+            // after processEnumDecl(), which exports enums
+            ctx.processFields(methodSet);
 
             methodSet.stream().map(md -> getMethodDecl(ctx, md, false /* optional */)).sorted()
                     .forEach((decl) -> ctx.append('\t').append(decl).append(ENDL));
