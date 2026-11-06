@@ -1,7 +1,7 @@
 
 
 import { test as future_test } from './future.test';
-import { MemoryType, Optional, StreamTokenizer, StringReader, URI } from './j2ts/jdk-types';
+import { Byte, Character, MemoryType, Optional, Short, StreamTokenizer, StringReader, URI } from './j2ts/jdk-types';
 import { test as marked_test } from './marked.test';
 import { test as promise_test } from './promise.test';
 
@@ -42,6 +42,22 @@ print(
 MemoryType.values().length = ${memoryTypes.length}
 MemoryType.values()[1]     = ${memoryTypes[1]}
 MemoryType.values() names  = ${memoryTypes.map( t => t.name() ).join( ", " )}
+`
+)
+
+
+// TEST CHAR, BYTE AND SHORT
+
+// a char is a string of length 1, byte and short are numbers
+const letter: char = Character.toUpperCase( 'j' );
+const answer: byte = Byte.parseByte( "42" );
+const max: short = Short.MAX_VALUE;
+
+print(
+`
+Character.toUpperCase('j') = ${letter}
+Byte.parseByte("42")       = ${answer}
+Short.MAX_VALUE            = ${max}
 `
 )
 

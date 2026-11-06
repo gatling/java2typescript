@@ -28,6 +28,11 @@
 		@Type(value=java.io.StreamTokenizer.class, export=true),
 		@Type(value=java.io.StringReader.class, export=true),
 
+		// char, byte and short
+		@Type(value=java.lang.Character.class, export=true),
+		@Type(value=java.lang.Byte.class, export=true),
+		@Type(value=java.lang.Short.class, export=true),
+
 		@Type(value=java.util.concurrent.CompletableFuture.class, export=true),
 		@Type(value=java.util.concurrent.Executor.class),
         
