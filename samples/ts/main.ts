@@ -1,7 +1,7 @@
 
 
 import { test as future_test } from './future.test';
-import { MemoryType, Optional, URI } from './j2ts/jdk-types';
+import { MemoryType, Optional, StreamTokenizer, StringReader, URI } from './j2ts/jdk-types';
 import { test as marked_test } from './marked.test';
 import { test as promise_test } from './promise.test';
 
@@ -28,8 +28,26 @@ print(
 MemoryType.HEAP         = ${MemoryType.HEAP}
 MemoryType.HEAP.name    = ${MemoryType.HEAP.name()}
 MemoryType.HEAP.ordinal = ${MemoryType.HEAP.ordinal()}
-`    
+`
 )
+
+
+// TEST PUBLIC FIELDS
+
+const tokenizer = new StreamTokenizer( new StringReader( "answer = 42" ) );
+const tokens: string[] = [];
+
+// TT_EOF, TT_WORD, TT_NUMBER: public static fields
+// ttype, sval, nval: public instance fields
+while( tokenizer.nextToken() != StreamTokenizer.TT_EOF ) {
+    switch( tokenizer.ttype ) {
+        case StreamTokenizer.TT_WORD:   tokens.push( `word '${tokenizer.sval}'` ); break;
+        case StreamTokenizer.TT_NUMBER: tokens.push( `number ${tokenizer.nval}` ); break;
+        default:                        tokens.push( `char '${String.fromCharCode( tokenizer.ttype )}'` );
+    }
+}
+
+print( `tokens: ${tokens.join( ", " )}` );
 
 
 let async_start = async () => {

@@ -24,6 +24,10 @@
 		@Type(value=java.util.concurrent.ConcurrentHashMap.class, export=true),
 		@Type(value=java.lang.management.MemoryType.class, export=true),
 
+		// Public fields
+		@Type(value=java.io.StreamTokenizer.class, export=true),
+		@Type(value=java.io.StringReader.class, export=true),
+
 		@Type(value=java.util.concurrent.CompletableFuture.class, export=true),
 		@Type(value=java.util.concurrent.Executor.class),
         
