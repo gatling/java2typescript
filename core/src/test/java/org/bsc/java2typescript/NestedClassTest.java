@@ -183,7 +183,7 @@ public class NestedClassTest extends AbstractConverterTest {
     @Test
     public void testStatic_level2_enum() {
         final String result = converter.processStatic(TSType.of(NestedMixed.Holder.Kind.class), fixtureTypeMap());
-        Assert.assertThat(result, containsString("\tA:org.bsc.java2typescript.NestedMixed$Holder$Kind;\n"));
+        Assert.assertThat(result, containsString("\treadonly A:org.bsc.java2typescript.NestedMixed$Holder$Kind;\n"));
         Assert.assertThat(result, containsString("export const NestedMixed$Holder$Kind: NestedMixed$Holder$KindStatic"));
     }
 
