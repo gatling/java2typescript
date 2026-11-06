@@ -137,7 +137,7 @@ public class TypescriptConverter extends TypescriptConverterStatic {
                     type = convertJavaToTS(tp.getType().getComponentType(), m, ctx.type, ctx.declaredTypeMap,
                             packageResolution, Optional.of(addTypeVar));
                 }
-                return String.format("...%s:%s[]", name, type);
+                return String.format("...%s:%s", name, arrayOf(type));
 
             }
 

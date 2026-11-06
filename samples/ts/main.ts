@@ -32,6 +32,20 @@ MemoryType.HEAP.ordinal = ${MemoryType.HEAP.ordinal()}
 )
 
 
+// TEST ARRAY
+
+// a Java array is a JavaScript array
+const memoryTypes = MemoryType.values();
+
+print(
+`
+MemoryType.values().length = ${memoryTypes.length}
+MemoryType.values()[1]     = ${memoryTypes[1]}
+MemoryType.values() names  = ${memoryTypes.map( t => t.name() ).join( ", " )}
+`
+)
+
+
 // TEST PUBLIC FIELDS
 
 const tokenizer = new StreamTokenizer( new StringReader( "answer = 42" ) );

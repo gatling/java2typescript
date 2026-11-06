@@ -194,7 +194,7 @@ public class NestedClassTest extends AbstractConverterTest {
     @Test
     public void testUsage_level1() throws Exception {
         Assert.assertThat(usage("level1"), equalTo("NestedStatic$L1"));
-        Assert.assertThat(usage("arrayOfLevel1"), equalTo("[NestedStatic$L1]"));
+        Assert.assertThat(usage("arrayOfLevel1"), equalTo("NestedStatic$L1[]"));
         Assert.assertThat(usage("genericLevel1"), equalTo("NestedStatic$G1<string>"));
         Assert.assertThat(usage("ifcFind"), equalTo("NestedIfc$Find<string>"));
     }
@@ -216,7 +216,7 @@ public class NestedClassTest extends AbstractConverterTest {
 
     @Test
     public void testUsage_level3_array() throws Exception {
-        Assert.assertThat(usage("arrayOfLevel3"), equalTo("[NestedStatic$L1$L2$L3]"));
+        Assert.assertThat(usage("arrayOfLevel3"), equalTo("NestedStatic$L1$L2$L3[]"));
     }
 
     @Test

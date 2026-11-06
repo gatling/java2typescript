@@ -208,6 +208,30 @@ public abstract class TypescriptConverterStatic {
    }
    
    /**
+    * TypeScript array of the given element type, e.g. {@code int[]}, or {@code (int|null)[]} for a union type,
+    * as {@code int|null[]} would be a union of {@code int} and {@code null[]}
+    *
+    * @param elementType
+    * @return
+    */
+   static String arrayOf( String elementType ) {
+       int depth = 0;
+       boolean union = false;
+       for( int i = 0; i < elementType.length() && !union; ++i ) {
+           final char c = elementType.charAt(i);
+           if( elementType.startsWith("/*", i) ) {
+               // skip comments, e.g. any /*java.lang.Object*/
+               final int end = elementType.indexOf("*/", i + 2);
+               i = ( end < 0 ) ? elementType.length() : end + 1;
+           }
+           else if( c == '<' || c == '(' ) ++depth;
+           else if( c == '>' || c == ')' ) --depth;
+           else if( c == '|' && depth == 0 ) union = true;
+       }
+       return format( union ? "(%s)[]" : "%s[]", elementType);
+   }
+
+   /**
    *
    * @param type
    * @param declaringType
@@ -237,7 +261,7 @@ public abstract class TypescriptConverterStatic {
       if( byte[].class.equals(type) ) return "bytearray";
 
       if( type.isArray()) {
-              return format( "[%s]", convertJavaToTS(type.getComponentType(), 
+              return arrayOf( convertJavaToTS(type.getComponentType(),
                                                       declaringType, 
                                                       declaredTypeMap,
                                                       packageResolution,
@@ -477,7 +501,7 @@ public abstract class TypescriptConverterStatic {
                                               declaredTypeMap,
                                               packageResolution,
                                               onTypeMismatch);
-          return format("%s[]", tt);
+          return arrayOf(tt);
           
           
           //return ( typeParameterMatch.apply(declaringType.getValue(), componentType ))  ?
